@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🗨️ Legendas Real Time</title>
+  <link rel="icon" href="cc.png" type="image/png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-glass: rgba(30, 41, 59, 0.6);
+      --accent-primary: #6366f1;
+      --accent-secondary: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-pink: #ec4899;
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-muted: rgba(255, 255, 255, 0.5);
+      --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+      animation: pulse 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.6;
+      }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 1rem;
+      gap: 1rem;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 1rem 1.5rem;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--accent-green);
+      border-radius: 2rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--accent-green);
+    }
+
+    .status.error {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 1rem;
+    }
+
+    .control-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 0.625rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: white;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    select {
+      padding: 0.625rem 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 0.5rem;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    select:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    select option {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    /* Subtitle Display */
+    .subtitle-container {
+      flex: 1;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 2rem;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .subtitle-text {
+      font-size: 2rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-weight: 500;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .subtitle-text.size-small {
+      font-size: 1.5rem;
+    }
+
+    .subtitle-text.size-medium {
+      font-size: 2rem;
+    }
+
+    .subtitle-text.size-large {
+      font-size: 2.5rem;
+    }
+
+    .subtitle-text.size-xlarge {
+      font-size: 3rem;
+    }
+
+    /* Themes */
+    .theme-default {
+      color: var(--text-primary);
+    }
+
+    .theme-yellow {
+      color: #fbbf24;
+    }
+
+    .theme-cyan {
+      color: var(--accent-cyan);
+    }
+
+    .theme-green {
+      color: var(--accent-green);
+    }
+
+    .theme-pink {
+      color: var(--accent-pink);
+    }
+
+    /* Speaker Colors for Game Mode */
+    .speaker-0 {
+      color: var(--accent-cyan);
+    }
+
+    .speaker-1 {
+      color: #fbbf24;
+    }
+
+    /* Amber */
+    .speaker-2 {
+      color: var(--accent-green);
+    }
+
+    .speaker-3 {
+      color: var(--accent-pink);
+    }
+
+    .speaker-4 {
+      color: #a78bfa;
+    }
+
+    /* Soft Violet */
+
+    .empty-state {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* Footer Info */
+    .footer-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Scrollbar */
+    .subtitle-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .subtitle-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .subtitle-container::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.5);
+      border-radius: 4px;
+    }
+
+    .subtitle-container::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.7);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0.5rem;
+        gap: 0.5rem;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 1rem;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .control-group {
+        width: 100%;
+        flex-wrap: wrap;
+      }
+
+      .btn,
+      select {
+        flex: 1;
+        min-width: 120px;
+      }
+
+      .subtitle-text {
+        font-size: 1.5rem;
+      }
+
+      .footer-info {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .modal-content {
+      background: var(--bg-secondary);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      max-width: 600px;
+      width: 100%;
+      color: var(--text-primary);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-header h2 {
+      font-size: 1.25rem;
+      color: var(--accent-cyan);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .step-card {
+      display: flex;
+      gap: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 0.75rem;
+      margin-top: 1rem;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      background: var(--accent-primary);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+    }
+
+    .note {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: rgba(236, 72, 153, 0.1);
+      border-left: 3px solid var(--accent-pink);
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .btn-icon {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1.25rem;
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+
+    .btn-icon:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+    }
+
+    @keyframes pulse-btn {
+      0% {
+        box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(6, 182, 212, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(6, 182, 212, 0);
+      }
+    }
+
+    #helpBtn {
+      animation: pulse-btn 2s infinite;
+      border-radius: 50%;
+      background: rgba(6, 182, 212, 0.1);
+      color: var(--accent-cyan);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    /* Comments System Styles */
+    .comments-container {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+      padding-right: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .comment-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      border-left: 3px solid var(--accent-cyan);
+    }
+
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-bottom: 0.25rem;
+    }
+
+    .comment-text {
+      font-size: 1rem;
+      word-wrap: break-word;
+    }
+
+    .comment-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <span>🗨️</span>
+        <span>Legendas Universais</span>
+        <button id="helpBtn" class="btn-icon" title="Como usar com YouTube/Jogos">❓</button>
+      </div>
+      <div class="status" id="status">
+        <span class="status-dot"></span>
+        <span id="statusText">Inicializando...</span>
+      </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>🎧 Como legendar YouTube e Jogos?</h2>
+          <button id="closeHelp" class="btn-icon">✖️</button>
+        </div>
+        <div class="modal-body">
+          <p>O Windows tem a função "Live Caption" que ouve tudo, mas <strong>sites de internet</strong> (como este) são
+            bloqueados por segurança e só ouvem o <strong>Microfone</strong>.</p>
+
+          <p>Para contornar isso e legendar vídeos/jogos, usamos a <strong>Mixagem Estéreo</strong>:</p>
+
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <div class="step-text">Clique com botão direito no som do Windows > <strong>Configurações de Som</strong>.
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <div class="step-text">Vá em <strong>Painel de Controle de Som</strong> > aba <strong>Gravação</strong>.
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <div class="step-text">Ative <strong>"Mixagem Estéreo"</strong>. Se não aparecer, clique com botão direito e
+              marque "Mostrar Desabilitados".</div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <div class="step-text">Recarregue esta página e escolha a <strong>Mixagem Estéreo</strong> quando pedir
+              permissão.</div>
+          </div>
+
+          <div class="note">
+            <strong>Dica "Sem Som":</strong> O volume do Windows precisa estar alto para a Mixagem funcionar. Se não
+            quiser ouvir barulho, <strong>plugue um fone de ouvido</strong> (e deixe-o na mesa) ou abaixe o volume da
+            sua caixa de som física, mas deixe o volume do Windows em 100%. ⚡
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirmModal" class="modal-overlay" style="display: none;">
+      <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+          <h2>🗑️ Limpar tudo?</h2>
+        </div>
+        <div class="modal-body">
+          <p>Você tem certeza que deseja apagar todas as legendas? Essa ação não pode ser desfeita.</p>
+          <div class="modal-actions">
+            <button id="cancelClearBtn" class="btn btn-secondary">Cancelar</button>
+            <button id="confirmClearBtn" class="btn btn-primary"
+              style="background: var(--accent-pink); border-color: var(--accent-pink);">Sim, Limpar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback/Comments Modal -->
+    <div id="feedbackModal" class="modal-overlay" style="display: none;">
+      <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-header">
+          <h3>🌐 Comentários Feedback </h3>
+          <span style="font-size: 0.6rem; opacity: 0.6; display: block; margin-top: 0.25rem;">Obrigado para a melhoria
+            do site!</span>
+        </div>
+        <div class="modal-body">
+
+          <!-- List of Comments -->
+          <div id="commentsList" class="comments-container">
+            <div style="text-align: center; opacity: 0.5; padding: 2rem;">Nenhum comentário ainda.</div>
+          </div>
+
+          <!-- Add Comment Form -->
+          <div class="comment-form">
+            <input id="commentName" placeholder="Seu Nome" maxlength="30"
+              style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: white; padding: 0.5rem;">
+            <textarea id="commentText" placeholder="Deixe seu comentário..."
+              style="width: 100%; height: 80px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: white; padding: 0.75rem; resize: vertical; font-family: inherit;"></textarea>
+          </div>
+
+          <div class="modal-actions">
+            <button id="cancelFeedbackBtn" class="btn btn-secondary">Fechar</button>
+            <button id="sendFeedbackBtn" class="btn btn-primary">Postar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="control-group">
+        <button class="btn btn-primary" id="toggleBtn">
+          <span id="toggleIcon">⏸️</span>
+          <span id="toggleText">Pausar</span>
+        </button>
+        <button class="btn btn-secondary" id="clearBtn">
+          🗑️ Limpar
+        </button>
+        <button class="btn btn-secondary" id="gameModeBtn" title="Quebra linhas mais rápido para jogos">
+          🎮 Modo Jogo
+        </button>
+      </div>
+
+      <div class="control-group">
+        <select id="languageSelect">
+          <option value="pt-BR">🇧🇷 Português (BR)</option>
+          <option value="en-US">🇺🇸 English (US)</option>
+          <option value="es-ES">🇪🇸 Español</option>
+          <option value="fr-FR">🇫🇷 Français</option>
+          <option value="de-DE">🇩🇪 Deutsch</option>
+          <option value="it-IT">🇮🇹 Italiano</option>
+          <option value="ja-JP">🇯🇵 日本語</option>
+          <option value="ko-KR">🇰🇷 한국어</option>
+          <option value="zh-CN">🇨🇳 中文</option>
+          <option value="ru-RU">🇷🇺 Русский</option>
+        </select>
+
+        <select id="fontSizeSelect">
+          <option value="small">🔤 Pequeno</option>
+          <option value="medium" selected>🔤 Médio</option>
+          <option value="large">🔤 Grande</option>
+          <option value="xlarge">🔤 Muito Grande</option>
+        </select>
+
+        <select id="themeSelect">
+          <option value="default">🎨 Branco</option>
+          <option value="yellow">🎨 Amarelo</option>
+          <option value="cyan">🎨 Ciano</option>
+          <option value="green">🎨 Verde</option>
+          <option value="pink">🎨 Rosa</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <button class="btn btn-secondary" id="copyBtn">
+          📋 Copiar
+        </button>
+        <button class="btn btn-secondary" id="exportBtn">
+          💾 Exportar
+        </button>
+      </div>
+    </div>
+
+    <!-- Subtitle Display -->
+    <div class="subtitle-container" id="subtitleContainer">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-state-icon">🎤</div>
+        <div>Aguardando sua voz...</div>
+        <div style="font-size: 0.75rem; margin-top: 0.5rem;">
+          Funciona com YouTube, reuniões, jogos e qualquer áudio do sistema
+        </div>
+      </div>
+      <div class="subtitle-text size-medium theme-default" id="subtitleText"></div>
+    </div>
+
+    <!-- Footer Info -->
+    <div class="footer-info">
+      <div class="info-item">
+        <span>⏱️</span>
+        <span id="duration">00:00:00</span>
+      </div>
+
+      <div class="info-item">
+        <span>💡 Atalhos: Espaço = Pausar | C = Limpar | E = Exportar</span>
+      </div>
+      <div class="info-item">
+        <span>👨‍💻 By Alan Toledo</span>
+        <button id="feedbackBtn" class="btn btn-primary"
+          style="padding: 0.2rem 1rem; font-size: 0.75rem; margin-left: 0.8rem; height: auto;">
+          📧 Feedback
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+
+  <script>
+    // ============================================
+    // FIREBASE SETUP
+    // ============================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyCa9FYCBHlLJKHE-kHwsNKE6AnIEnoouu8",
+      authDomain: "legenda-feedback-cb347.firebaseapp.com",
+      projectId: "legenda-feedback-cb347",
+      storageBucket: "legenda-feedback-cb347.firebasestorage.app",
+      messagingSenderId: "1027957417742",
+      appId: "1:1027957417742:web:b0dabd3016215e57e3595f"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const commentsRef = db.ref('comments');
+
+    // ============================================
+    // STATE MANAGEMENT
+    // ============================================
+    let recognition = null;
+    let isRecognizing = false;
+    let isPaused = false;
+    let gameMode = false;
+    let speakerIndex = 0; // Tracks color cycle
+    let accumulatedText = '';
+    let startTime = null;
+    let timerInterval = null;
+    let translationCache = new Map();
+
+    // ============================================
+    // DOM ELEMENTS
+    // ============================================
+    const elements = {
+      status: document.getElementById('status'),
+      statusText: document.getElementById('statusText'),
+      toggleBtn: document.getElementById('toggleBtn'),
+      toggleIcon: document.getElementById('toggleIcon'),
+      toggleText: document.getElementById('toggleText'),
+      clearBtn: document.getElementById('clearBtn'),
+      gameModeBtn: document.getElementById('gameModeBtn'),
+      copyBtn: document.getElementById('copyBtn'),
+      exportBtn: document.getElementById('exportBtn'),
+      helpBtn: document.getElementById('helpBtn'),
+      closeHelp: document.getElementById('closeHelp'),
+      helpModal: document.getElementById('helpModal'),
+      confirmModal: document.getElementById('confirmModal'),
+      cancelClearBtn: document.getElementById('cancelClearBtn'),
+      confirmClearBtn: document.getElementById('confirmClearBtn'),
+      feedbackModal: document.getElementById('feedbackModal'),
+      commentName: document.getElementById('commentName'),
+      commentText: document.getElementById('commentText'),
+      commentsList: document.getElementById('commentsList'),
+      feedbackBtn: document.getElementById('feedbackBtn'),
+      cancelFeedbackBtn: document.getElementById('cancelFeedbackBtn'),
+      sendFeedbackBtn: document.getElementById('sendFeedbackBtn'),
+      languageSelect: document.getElementById('languageSelect'),
+      fontSizeSelect: document.getElementById('fontSizeSelect'),
+      themeSelect: document.getElementById('themeSelect'),
+      subtitleContainer: document.getElementById('subtitleContainer'),
+      subtitleText: document.getElementById('subtitleText'),
+      emptyState: document.getElementById('emptyState'),
+      duration: document.getElementById('duration')
+    };
+
+    // ============================================
+    // FIREBASE REALTIME LISTENERS
+    // ============================================
+    // ============================================
+    // FIREBASE REALTIME LISTENERS
+    // ============================================
+    // Listen for changes in comments (Add/Remove)
+    commentsRef.on('value', (snapshot) => {
+      elements.commentsList.innerHTML = '';
+      const data = snapshot.val();
+
+      if (!data) {
+        elements.commentsList.innerHTML = '<div style="text-align: center; opacity: 0.5; padding: 2rem;">Nenhum comentário ainda. Seja o primeiro!</div>';
+        return;
+      }
+
+      // Convert object to array and reverse (newest first)
+      const commentsArray = Object.entries(data).map(([key, value]) => ({ id: key, ...value })).reverse();
+
+      commentsArray.forEach((comment) => {
+        const div = document.createElement('div');
+        div.className = 'comment-item';
+        div.innerHTML = `
+          <div class="comment-header">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <strong>${comment.name}</strong>
+              <span style="font-size: 0.8rem; opacity: 0.6;">${comment.date}</span>
+            </div>
+            <button class="delete-btn" data-id="${comment.id}" title="Excluir" style="background:none; border:none; cursor:pointer; font-size:1.1rem; opacity:0.5; transition: opacity 0.2s; padding:0;">🗑️</button>
+          </div>
+          <div class="comment-text">${comment.text}</div>
+        `;
+
+        // Delete Logic
+        const delBtn = div.querySelector('.delete-btn');
+        delBtn.onmouseover = () => delBtn.style.opacity = '1';
+        delBtn.onmouseout = () => delBtn.style.opacity = '0.5';
+
+        delBtn.addEventListener('click', () => {
+          const pwd = prompt('Digite a senha para excluir:');
+          if (pwd === 'excluido') {
+            db.ref(`comments/${comment.id}`).remove()
+              .then(() => updateStatus('🗑️ Comentário excluído', false))
+              .catch((err) => alert('Erro ao excluir: ' + err));
+          } else if (pwd !== null) {
+            alert('Senha incorreta! Acesso negado.');
+          }
+        });
+
+        elements.commentsList.appendChild(div);
+      });
+    });
+
+    // ============================================
+    // SPEECH RECOGNITION SETUP
+    // ============================================
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    // Keep microphone stream active to prevent repeated permissions
+    let persistentStream = null;
+
+    async function initPersistentMicrophone() {
+      try {
+        if (!persistentStream) {
+          persistentStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          // Mute the stream so we don't cause feedback/echo, but keep it active
+          persistentStream.getAudioTracks().forEach(track => track.enabled = false);
+          console.log('Microphone kept alive for permission persistence');
+        }
+      } catch (e) {
+        console.warn('Could not init persistent microphone:', e);
+      }
+    }
+
+    if (!SpeechRecognition) {
+      updateStatus('⚠️ Navegador não suporta reconhecimento de voz', true);
+      elements.toggleBtn.disabled = true;
+    } else {
+      loadSettings();
+      // Try to start with persistent stream
+      initPersistentMicrophone().then(() => {
+        initRecognition();
+        setTimeout(() => startRecognition(), 500);
+      });
+    }
+
+    function initRecognition() {
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = elements.languageSelect.value;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        isRecognizing = true;
+        if (!startTime) {
+          startTime = Date.now();
+          startTimer();
+        }
+        updateStatus('🎤 Ouvindo...', false);
+        console.log('✅ Reconhecimento iniciado com sucesso!');
+      };
+
+      recognition.onresult = (event) => {
+        let interimTranscript = '';
+        let finalTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            // Game mode: adds a prefix and color to look like a chat log
+            if (gameMode) {
+              const colorClass = `speaker-${speakerIndex % 5}`;
+              speakerIndex++;
+              // Wrap in span for color
+              const prefix = '- ';
+              finalTranscript += `<span class="${colorClass}">${prefix}${transcript}</span>\n`;
+            } else {
+              finalTranscript += transcript + '\n';
+            }
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+
+        if (finalTranscript) {
+          // Translate if language is not Portuguese
+          if (elements.languageSelect.value !== 'pt-BR') {
+            // Show original text momentarily while translating to keep it fluid
+            const tempText = accumulatedText + finalTranscript;
+            updateSubtitleDisplay(tempText);
+
+            translateText(finalTranscript).then(translated => {
+              accumulatedText += translated;
+              saveToLocalStorage();
+              // Update display with translated text
+              updateSubtitleDisplay(accumulatedText + interimTranscript);
+            });
+          } else {
+            // Portuguese - just add directly
+            accumulatedText += finalTranscript;
+            saveToLocalStorage();
+          }
+        }
+
+        // Show real-time interim results immediately so it doesn't feel "frozen"
+        // If translating, show the original interim text in potential translation queue
+        // This gives immediate feedback "accompanying the voice"
+        if (elements.languageSelect.value !== 'pt-BR') {
+          // For non-PT, we show what is being heard instantenously
+          // It will be replaced by Portuguese translation once sentence finishes
+          updateSubtitleDisplay(accumulatedText + interimTranscript);
+        } else {
+          updateSubtitleDisplay(accumulatedText + interimTranscript);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Recognition error:', event.error);
+
+        // Handle different error types
+        if (event.error === 'no-speech') {
+          // Don't show error for no-speech, it's normal
+          console.log('Aguardando fala...');
+        } else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          updateStatus('⚠️ Permissão de microfone negada. Clique no ícone 🔒 na barra de endereço e permita o microfone.', true);
+          isPaused = true;
+          isRecognizing = false;
+          updateToggleButton();
+          elements.toggleBtn.disabled = false; // Allow user to try again
+        } else if (event.error === 'network') {
+          updateStatus('⚠️ Erro de rede. Verifique sua conexão.', true);
+        } else if (event.error === 'aborted') {
+          console.log('Reconhecimento abortado (normal ao trocar configurações)');
+        } else {
+          updateStatus(`⚠️ Erro: ${event.error}`, true);
+        }
+      };
+
+      recognition.onend = () => {
+        console.log('Recognition ended, isRecognizing:', isRecognizing, 'isPaused:', isPaused);
+        if (isRecognizing && !isPaused) {
+          // Add a small delay before restarting
+          setTimeout(() => {
+            if (isRecognizing && !isPaused) {
+              try {
+                recognition.start();
+                console.log('Reconhecimento reiniciado');
+              } catch (e) {
+                console.error('Error restarting recognition:', e);
+                if (e.name === 'InvalidStateError') {
+                  // Recognition is already started, ignore
+                  console.log('Recognition already running');
+                } else {
+                  updateStatus('⚠️ Erro ao reiniciar. Clique em "Continuar" para tentar novamente.', true);
+                }
+              }
+            }
+          }, 300);
+        }
+      };
+    }
+
+    // ============================================
+    // RECOGNITION CONTROLS
+    // ============================================
+    function startRecognition() {
+      if (!recognition || isRecognizing) return;
+
+      try {
+        recognition.start();
+        isPaused = false;
+        updateToggleButton();
+      } catch (e) {
+        console.error('Error starting recognition:', e);
+      }
+    }
+
+    function stopRecognition() {
+      if (!recognition || !isRecognizing) return;
+
+      isRecognizing = false;
+      isPaused = true;
+      recognition.stop();
+      updateToggleButton();
+      updateStatus('⏸️ Pausado', false);
+      stopTimer();
+    }
+
+    function toggleRecognition() {
+      if (isPaused) {
+        startRecognition();
+      } else {
+        stopRecognition();
+      }
+    }
+
+    // ============================================
+    // UI UPDATES
+    // ============================================
+    function updateStatus(text, isError = false) {
+      elements.statusText.textContent = text;
+      if (isError) {
+        elements.status.classList.add('error');
+      } else {
+        elements.status.classList.remove('error');
+      }
+    }
+
+    function updateToggleButton() {
+      if (isPaused) {
+        elements.toggleIcon.textContent = '▶️';
+        elements.toggleText.textContent = 'Continuar';
+        elements.toggleBtn.classList.remove('btn-primary');
+        elements.toggleBtn.classList.add('btn-secondary');
+      } else {
+        elements.toggleIcon.textContent = '⏸️';
+        elements.toggleText.textContent = 'Pausar';
+        elements.toggleBtn.classList.remove('btn-secondary');
+        elements.toggleBtn.classList.add('btn-primary');
+      }
+    }
+
+    function updateSubtitleDisplay(text) {
+      if (text.trim()) {
+        elements.emptyState.style.display = 'none';
+        // USE INNERHTML TO SUPPORT COLORS
+        elements.subtitleText.innerHTML = text;
+        elements.subtitleText.classList.add('fade-in');
+
+        // Auto-scroll to bottom
+        elements.subtitleContainer.scrollTop = elements.subtitleContainer.scrollHeight;
+
+
+      } else {
+        elements.emptyState.style.display = 'block';
+        elements.subtitleText.innerHTML = '';
+      }
+    }
+
+    // ============================================
+    // TIMER
+    // ============================================
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const hours = Math.floor(elapsed / 3600000);
+        const minutes = Math.floor((elapsed % 3600000) / 60000);
+        const seconds = Math.floor((elapsed % 60000) / 1000);
+
+        elements.duration.textContent =
+          `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+    }
+
+    // ============================================
+    // TRANSLATION
+    // ============================================
+    async function translateText(text) {
+      // Check cache first
+      if (translationCache.has(text)) {
+        return translationCache.get(text);
+      }
+
+      console.log(`🔍 Traduzindo: "${text.trim()}"...`);
+
+      try {
+        const sourceLang = elements.languageSelect.value.split('-')[0]; // Get language code
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|pt`;
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.responseStatus === 200 && data.responseData) {
+          const translated = data.responseData.translatedText;
+          console.log(`✅ Traduzido: "${translated}"`);
+          translationCache.set(text, translated + '\n');
+          return translated + '\n';
+        } else {
+          console.error('Translation error payload:', data);
+          // Return original text but mark it so user knows translation failed
+          return `${text} ⚠️(Erro de tradução)\n`;
+        }
+      } catch (error) {
+        console.error('Translation API connection error:', error);
+        return `${text} ⚠️(Offline)\n`;
+      }
+    }
+
+    // ============================================
+    // ACTIONS
+    // ============================================
+    function clearText() {
+      // Show custom modal instead of native confirm
+      elements.confirmModal.style.display = 'flex';
+    }
+
+    // Actual clear function called by modal
+    function performClear() {
+      accumulatedText = '';
+      updateSubtitleDisplay('');
+
+      localStorage.removeItem('subtitleText');
+      elements.confirmModal.style.display = 'none';
+      updateStatus('🗑️ Texto limpo', false);
+    }
+
+    function copyText() {
+      if (!accumulatedText.trim()) {
+        alert('Nenhum texto para copiar!');
+        return;
+      }
+
+      // Strip HTML tags before copying
+      const cleanText = accumulatedText.replace(/<[^>]+>/g, '');
+
+      navigator.clipboard.writeText(cleanText.trim()).then(() => {
+        const originalText = elements.copyBtn.textContent;
+        elements.copyBtn.textContent = '✅ Copiado!';
+        setTimeout(() => {
+          elements.copyBtn.textContent = originalText;
+        }, 2000);
+      }).catch(err => {
+        alert('Erro ao copiar: ' + err);
+      });
+    }
+
+    function exportText() {
+      if (!accumulatedText.trim()) {
+        alert('Nenhum texto para exportar!');
+        return;
+      }
+
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+      const filename = `legenda_${timestamp}.txt`;
+
+      // Strip HTML tags before exporting
+      const cleanText = accumulatedText.replace(/<[^>]+>/g, '');
+
+      const blob = new Blob([cleanText.trim()], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      const originalText = elements.exportBtn.textContent;
+      elements.exportBtn.textContent = '✅ Exportado!';
+      setTimeout(() => {
+        elements.exportBtn.textContent = originalText;
+      }, 2000);
+    }
+
+    // ============================================
+    // SETTINGS
+    // ============================================
+    function changeLanguage() {
+      const newLang = elements.languageSelect.value;
+      if (recognition) {
+        recognition.lang = newLang;
+        if (isRecognizing && !isPaused) {
+          recognition.stop();
+          setTimeout(() => recognition.start(), 100);
+        }
+      }
+      saveSettings();
+    }
+
+    function changeFontSize() {
+      const size = elements.fontSizeSelect.value;
+      elements.subtitleText.className = elements.subtitleText.className.replace(/size-\w+/, `size-${size}`);
+      saveSettings();
+    }
+
+    function changeTheme() {
+      const theme = elements.themeSelect.value;
+      elements.subtitleText.className = elements.subtitleText.className.replace(/theme-\w+/, `theme-${theme}`);
+      saveSettings();
+    }
+
+    function saveSettings() {
+      const settings = {
+        language: elements.languageSelect.value,
+        fontSize: elements.fontSizeSelect.value,
+        theme: elements.themeSelect.value
+      };
+      localStorage.setItem('subtitleSettings', JSON.stringify(settings));
+    }
+
+    function loadSettings() {
+      const saved = localStorage.getItem('subtitleSettings');
+      if (saved) {
+        const settings = JSON.parse(saved);
+        elements.languageSelect.value = settings.language || 'pt-BR';
+        elements.fontSizeSelect.value = settings.fontSize || 'medium';
+        elements.themeSelect.value = settings.theme || 'default';
+        autoTranslate = settings.autoTranslate || false;
+
+        changeFontSize();
+        changeTheme();
+
+        // Update translate button state
+        if (autoTranslate) {
+          elements.translateIcon.textContent = '✅';
+          elements.translateText.textContent = 'Traduzir ON';
+          elements.translateBtn.classList.remove('btn-secondary');
+          elements.translateBtn.classList.add('btn-primary');
+        }
+      }
+
+      // Load saved text
+      const savedText = localStorage.getItem('subtitleText');
+      if (savedText) {
+        accumulatedText = savedText;
+        updateSubtitleDisplay(accumulatedText);
+      }
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem('subtitleText', accumulatedText);
+    }
+
+    // ============================================
+    // EVENT LISTENERS
+    // ============================================
+    elements.toggleBtn.addEventListener('click', toggleRecognition);
+    elements.clearBtn.addEventListener('click', clearText);
+    elements.copyBtn.addEventListener('click', copyText);
+    elements.exportBtn.addEventListener('click', exportText);
+    elements.languageSelect.addEventListener('change', changeLanguage);
+    elements.fontSizeSelect.addEventListener('change', changeFontSize);
+    elements.themeSelect.addEventListener('change', changeTheme);
+
+    // Game Mode Toggle
+    elements.gameModeBtn.addEventListener('click', () => {
+      gameMode = !gameMode;
+      if (gameMode) {
+        elements.gameModeBtn.classList.remove('btn-secondary');
+        elements.gameModeBtn.classList.add('btn-primary');
+        elements.gameModeBtn.innerHTML = '🎮 Modo Jogo: <strong>Ativado</strong>';
+        updateStatus('🎮 Modo Jogo Ativado', false);
+      } else {
+        elements.gameModeBtn.classList.remove('btn-primary');
+        elements.gameModeBtn.classList.add('btn-secondary');
+        elements.gameModeBtn.textContent = '🎮 Modo Jogo';
+        updateStatus('🎮 Modo Jogo Desativado', false);
+      }
+    });
+
+    // Help Modal
+    elements.helpBtn.addEventListener('click', () => {
+      elements.helpModal.style.display = 'flex';
+    });
+
+    elements.closeHelp.addEventListener('click', () => {
+      elements.helpModal.style.display = 'none';
+    });
+
+    elements.helpModal.addEventListener('click', (e) => {
+      if (e.target === elements.helpModal) {
+        elements.helpModal.style.display = 'none';
+      }
+    });
+
+    // Confirm Modal Listeners
+    elements.confirmClearBtn.addEventListener('click', performClear);
+
+    elements.cancelClearBtn.addEventListener('click', () => {
+      elements.confirmModal.style.display = 'none';
+    });
+
+    elements.confirmModal.addEventListener('click', (e) => {
+      elements.confirmModal.style.display = 'none';
+    });
+
+    // Feedback/Comments Modal Listeners
+    elements.feedbackBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      elements.feedbackModal.style.display = 'flex';
+      // Load saved name if exists (optional convenience)
+      const savedName = localStorage.getItem('legenda_username');
+      if (savedName) elements.commentName.value = savedName;
+
+      if (!savedName) elements.commentName.focus();
+      else elements.commentText.focus();
+    });
+
+    elements.cancelFeedbackBtn.addEventListener('click', () => {
+      elements.feedbackModal.style.display = 'none';
+    });
+
+    elements.sendFeedbackBtn.addEventListener('click', () => {
+      const name = elements.commentName.value.trim();
+      const text = elements.commentText.value.trim();
+
+      if (!name || !text) {
+        alert('Por favor, preencha seu nome e a mensagem.');
+        return;
+      }
+
+      // Profanity Filter (Name Only)
+      const badWords = [
+        // Palavrões comuns
+        'merda', 'bosta', 'porra', 'caralho', 'cu', 'puta', 'viado', 'vi4do', 'viadozinho', 'v1adoz1nho', 'viad0', 'v14d0', 'sexo', 'foda', 'fuder', 'cacete', 'filho da puta', 'pqp', 'diabos', 'inferno',
+
+        // Variações leet / com números
+        'merd4', 'bost4', 'p0rra', 'c4ralho', 'cú', 'v14do', 'g4y', 'f0da', 'fud3r', 'c4cete', 'pqp', 'f1lh0 d4 put4',
+
+        // Palavrões sexuais
+        'piranha', 'corna', 'corno', 'buceta', 'pau', 'rola', 'vagina', 'pepeca', 'orgia', 'gozar', 'tesão', 'bucetinha', 'pauzudo', 'rolinha',
+
+        // Insultos pessoais
+        'idiota', 'burro', 'imbecil', 'retardado', 'inútil', 'estupido', 'otario', 'lixo', 'vadia', 'imundo', 'asno', 'chato', 'babaca', 'escroto', 'nojento',
+
+        // Insultos homofóbicos e orientações sexuais
+        'sapatão', 'gay', 'bichona', 'traveco', 'traveca', 'froxa', 'gayzinho', 'maricas',
+
+        // Ofensas religiosas / culturais
+        'satanás', 'demônio', 'maldito', 'herege', 'caramba', 'droga', 'desgraça', 'peste',
+
+        // Variações comuns com números
+        'g4yzinho', 'v1ado', 'mar1cas', 'tr4veco', 'tr4veca', 'f0dase', 'cuz4o', 'merd4o', 'c4ralh4o', 'fud1do', 'fud1da', 'd3sgr4ç4do', 'd3sgr4ç4da',
+
+        // Expressões de raiva / misc
+        'merdalhão', 'filhadaputa', 'caralhinho', 'cuzao', 'fuderoso', 'viadozinho', 'babacão', 'escrotinho', 'diabinho', 'malditinho', 'pestinha', 'cachorra', 'cachorrão'
+      ];
+      const nameLower = name.toLowerCase();
+      const hasProfanity = badWords.some(word => nameLower.includes(word));
+
+      if (hasProfanity) {
+        alert('🚫 Nome impróprio! Por favor, digite o seu nome.');
+        return;
+      }
+
+      // Save to Firebase
+      commentsRef.push({
+        name: name,
+        text: text,
+        date: new Date().toLocaleString('pt-BR')
+      })
+        .then(() => {
+          elements.commentText.value = ''; // Clear text, keep name
+          updateStatus('✅ Comentário postado!', false);
+        })
+        .catch((err) => {
+          console.error(err);
+          if (err.message && err.message.includes('PERMISSION_DENIED')) {
+            alert('🚫 ACESSO TENTE NOVAMENTE!\n\nVocê precisa ir no site do Firebase -> Aba "Regras" e colocar ".write": true.\n\n(O banco de dados está bloqueado para gravação).');
+          } else {
+            alert('Erro ao postar: ' + err);
+          }
+        });
+
+      localStorage.setItem('legenda_username', name); // Remember name locally
+    });
+
+    elements.feedbackModal.addEventListener('click', (e) => {
+      if (e.target === elements.feedbackModal) {
+        elements.feedbackModal.style.display = 'none';
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Ignore if typing in an input/select/textarea
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        toggleRecognition();
+      } else if (e.key.toLowerCase() === 'c') {
+        clearText();
+      } else if (e.key.toLowerCase() === 'e') {
+        exportText();
+      }
+    });
+
+    // Save text periodically
+    setInterval(saveToLocalStorage, 5000);
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      saveToLocalStorage();
+      if (recognition && isRecognizing) {
+        recognition.stop();
+      }
+    });
+
+    console.log('%c🎙️ Legendas Universais', 'font-size: 20px; font-weight: bold; background: linear-gradient(135deg, #6366f1, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;');
+    console.log('%cAtalhos: Espaço = Pausar/Continuar | C = Limpar | E = Exportar', 'color: #06b6d4;');
+  </script>
+</body>
+
+</html>

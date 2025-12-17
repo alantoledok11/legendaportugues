@@ -2,10 +2,6 @@
 
 **Legendas automáticas e tradução em tempo real direto no seu navegador.**  
 Ideal para **YouTube, Reuniões, Jogos e Podcasts**.
-
-![Screenshot]([https://via.placeholder.com/800x400?text=Legendas+Real+Time+Preview](https://alantoledok11.github.io/legendaportugues/))
-*(Substitua o link acima por um print do seu site depois!)*
-
 ---
 
 ## ✨ Funcionalidades
@@ -40,4 +36,3 @@ Ideal para **YouTube, Reuniões, Jogos e Podcasts**.
 
 Desenvolvido por **Alan Toledo**.
 *Projeto criado para facilitar a acessibilidade e comunicação.*
-
